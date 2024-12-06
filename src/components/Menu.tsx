@@ -23,7 +23,7 @@ const menuItems = [
       {
         icon: "/parent.png",
         label: "Parents",
-        href: "/list/parents",
+        href: "parents",
         visible: ["admin", "teacher"],
       },
       {
@@ -125,10 +125,9 @@ function Menu() {
         <div className='flex flex-col gap-2' key={i.title}>
           <span className='hidden lg:block text-gray-400 font-light my-4'>{i.title}</span>
           {i.items.map(item=>(
-            <div>
               <Link 
                 href={item.href}
-                className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2"
+                className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2 rounded-md"
                 key={item.label}
             >
                 <Image 
@@ -139,7 +138,6 @@ function Menu() {
                 />
                 <span className="hidden lg:block">{item.label}</span>
             </Link>
-            </div>
           ))}
         </div>
       ))}
