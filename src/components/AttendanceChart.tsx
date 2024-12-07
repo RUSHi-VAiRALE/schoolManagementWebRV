@@ -42,7 +42,8 @@ function AttendanceChart() {
             <Image src='/moreDark.png' alt='moreDark' width={20} height={20}/>
         </div>
         {/*section 2 chart*/}
-            <ResponsiveContainer width="100%" height="80%">
+        <div className='w-full h-[90%]'>
+            <ResponsiveContainer>
                 <BarChart
                 width={500}
                 height={300}
@@ -63,9 +64,7 @@ function AttendanceChart() {
                 <Bar dataKey="present" fill="#FAE27C" legendType='circle' radius={[10,10,0,0]}/>
                 <Bar dataKey="absent" fill="#C3EBFA" legendType='circle' radius={[10,10,0,0]}/>
                 </BarChart>
-      </ResponsiveContainer>
-        <div>
-
+        </ResponsiveContainer>
         </div>
     </div>
   )
