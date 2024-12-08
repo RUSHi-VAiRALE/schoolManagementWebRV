@@ -23,7 +23,7 @@ const menuItems = [
       {
         icon: "/parent.png",
         label: "Parents",
-        href: "parents",
+        href: "/list/parents",
         visible: ["admin", "teacher"],
       },
       {
@@ -117,6 +117,7 @@ const menuItems = [
 import React from 'react'
 import Link from 'next/link';
 import Image from 'next/image';
+import { role } from '@/lib/data';
 
 function Menu() {
   return (
@@ -124,10 +125,12 @@ function Menu() {
       {menuItems.map(i=>(
         <div className='flex flex-col gap-2' key={i.title}>
           <span className='hidden lg:block text-gray-400 font-light my-4'>{i.title}</span>
-          {i.items.map(item=>(
-              <Link 
+          {i.items.map(item=>{
+            if (item.visible.includes(role)) {
+              return (
+                <Link 
                 href={item.href}
-                className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2 rounded-md"
+                className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2 rounded-md hover:bg-custColorLight md:px-2"
                 key={item.label}
             >
                 <Image 
@@ -138,7 +141,9 @@ function Menu() {
                 />
                 <span className="hidden lg:block">{item.label}</span>
             </Link>
-          ))}
+              )
+            }
+          })}
         </div>
       ))}
     </div>
