@@ -5,6 +5,7 @@ import Image from 'next/image'
 import React from 'react'
 import Link from 'next/link'
 import { role, lessonsData } from '@/lib/data'
+import FormModal from '@/components/FormModal'
 
 type Lesson = {
     id:number;
@@ -46,15 +47,11 @@ function LessonListPage() {
             <td className='hidden md:table-cell'>{item.teacher}</td>
             <td>
                 <div className='flex items-center gap-2'>
-                    <Link href={`/list/teachers/${item.id}`}>
-                        <button className='w-7 h-7 flex items-center justify-center rounded-full bg-custColor'>
-                            <Image src="/edit.png" alt='' width={16} height={16}/>
-                        </button>
-                    </Link>
-                    {
-                        role === "admin" && (<button className='w-7 h-7 flex items-center justify-center rounded-full bg-custPurple'>
-                            <Image src="/delete.png" alt='' width={16} height={16}/>
-                        </button>
+                    {role==='admin' && (
+                        <>
+                            <FormModal table='lesson' type='update' data={item}/>
+                            <FormModal table='lesson' type='delete' id={item.id}/>
+                        </>
                     )}
                 </div>
             </td>
@@ -75,9 +72,7 @@ function LessonListPage() {
                     <button className='w-8 h-8 flex justify-center items-center bg-custYellow rounded-full'>
                         <Image src="/sort.png" alt='plus' width={14} height={14} />
                     </button>
-                    <button className='w-8 h-8 flex justify-center items-center bg-custYellow rounded-full'>
-                        <Image src="/plus.png" alt='plus' width={14} height={14} />
-                    </button>
+                    {role==='admin' && <FormModal table='lesson' type='create' />}
                 </div>
             </div>
         </div>

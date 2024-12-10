@@ -5,6 +5,7 @@ import Image from 'next/image'
 import React from 'react'
 import Link from 'next/link'
 import { role, parentsData } from '@/lib/data'
+import FormModal from '@/components/FormModal'
 
 type Parent = {
     id:number;
@@ -56,15 +57,11 @@ function ParentListPage() {
             <td className='hidden md:table-cell'>{item.address}</td>
             <td>
                 <div className='flex items-center gap-2'>
-                    <Link href={`/list/teachers/${item.id}`}>
-                        <button className='w-7 h-7 flex items-center justify-center rounded-full bg-custColor'>
-                            <Image src="/edit.png" alt='' width={16} height={16}/>
-                        </button>
-                    </Link>
-                    {
-                        role === "admin" && (<button className='w-7 h-7 flex items-center justify-center rounded-full bg-custPurple'>
-                            <Image src="/delete.png" alt='' width={16} height={16}/>
-                        </button>
+                    {role==='admin' && (
+                        <>
+                            <FormModal table='parent' type='update' data={item}/>
+                            <FormModal table='parent' type='delete' id={item.id}/>
+                        </>
                     )}
                 </div>
             </td>
@@ -85,9 +82,9 @@ function ParentListPage() {
                     <button className='w-8 h-8 flex justify-center items-center bg-custYellow rounded-full'>
                         <Image src="/sort.png" alt='plus' width={14} height={14} />
                     </button>
-                    <button className='w-8 h-8 flex justify-center items-center bg-custYellow rounded-full'>
-                        <Image src="/plus.png" alt='plus' width={14} height={14} />
-                    </button>
+                    {role==='admin' && (
+                        <FormModal table='parent' type='create'/>
+                    )}
                 </div>
             </div>
         </div>
