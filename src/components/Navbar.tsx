@@ -1,7 +1,17 @@
+'use client'
 import Image from 'next/image'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useUser, SignOutButton } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation';
 
 function Navbar() {
+  const { user } = useUser();
+  const router = useRouter()
+  useEffect(()=>{
+    if(user==null){
+      router.push('/')
+    }
+  },[user,router])
   return (
     <div className='flex justify-between items-center p-4'>
       {/* Search bar */}
@@ -24,6 +34,7 @@ function Navbar() {
         </div>
         <Image src='/avatar.png' alt='avatar' width={36} height={36} className='rounded-full' />
       </div>
+      <SignOutButton redirectUrl={'/'} />
     </div>
   )
 }
