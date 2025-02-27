@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 function Navbar() {
   const { user } = useUser();
+  const role = user?.publicMetadata.role as string;
   const router = useRouter()
   useEffect(()=>{
     if(user==null){
@@ -30,7 +31,7 @@ function Navbar() {
         </div>
         <div className='flex flex-col'>
           <span className='text-xs leading-3 font-medium'>Rushi</span>
-          <span className='text-[10px] text-gray-500 text-right'>Admin</span>
+          <span className='text-[10px] text-gray-500 text-right'>{role}</span>
         </div>
         <Image src='/avatar.png' alt='avatar' width={36} height={36} className='rounded-full' />
       </div>
