@@ -66,7 +66,6 @@ async function AssignmentListPage({searchParams,}:{searchParams:{[key:string]:st
     // URL Params condition
 
     const query: Prisma.AssignmentWhereInput = {}
-
     if(queryParams){
         for(const [key,value] of Object.entries(queryParams)){
             if(value !== undefined){
@@ -113,7 +112,7 @@ async function AssignmentListPage({searchParams,}:{searchParams:{[key:string]:st
         prisma.assignment.count({where:query})
     ])
 
-  return (
+return (
     <div className='bg-white h-full p-4 rounded-md flex-1 mt-0 m-4'>
         {/* TOP */}
         <div className='flex items-center justify-between'>
