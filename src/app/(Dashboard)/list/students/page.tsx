@@ -9,6 +9,7 @@ import { role} from '@/lib/data'
 import { Class, Prisma, Student } from '@prisma/client'
 import prisma from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
+import { currentUser } from '@clerk/nextjs/server'
 
 type StudentList = Student & {class:Class}
 
@@ -103,7 +104,7 @@ async function StudentListPage({searchParams,}:{searchParams:{[key:string]:strin
             }
         }
     }
-
+    
     const [data,count] = await prisma.$transaction([
         prisma.student.findMany(
         {

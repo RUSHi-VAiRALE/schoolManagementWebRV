@@ -8,6 +8,7 @@ import FormModal from '@/components/FormModal'
 import prisma from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
 import { Prisma, Assignment,Subject,Class,Teacher } from '@prisma/client'
+import { currentUser } from '@clerk/nextjs/server'
 
 type AssignmentList = Assignment & {lesson:{subject:Subject, class:Class, teacher:Teacher}}
 
@@ -61,11 +62,13 @@ const renderRow = (item:AssignmentList) => (
 async function AssignmentListPage({searchParams,}:{searchParams:{[key:string]:string | undefined};}) {
 
     const {page , ...queryParams} = await searchParams;
+    const userRole = await currentUser();
     const p = page ? parseInt(page) : 1;
 
     // URL Params condition
 
     const query: Prisma.AssignmentWhereInput = {}
+    query.lesson = {}
     if(queryParams){
         for(const [key,value] of Object.entries(queryParams)){
             if(value !== undefined){
@@ -92,7 +95,34 @@ async function AssignmentListPage({searchParams,}:{searchParams:{[key:string]:st
             }
         }
     }
-
+    
+    switch (userRole?.publicMetadata.role) {
+        case "admin":
+            break;
+        case "student":
+            query.lesson.class = {
+                student:{
+                    some:{
+                        id : 'student3'
+                    }
+                }
+            };
+            break
+        case "teacher":
+            query.lesson.teacherId = 'teacher3'
+            break
+        case "parent":
+            query.lesson.class = {
+                student:{
+                    some:{
+                        parentId : 'parentId1'
+                    }
+                }
+            }
+            break
+        default:
+            break;
+    }
     const [data,count] = await prisma.$transaction([
         prisma.assignment.findMany(
         {
