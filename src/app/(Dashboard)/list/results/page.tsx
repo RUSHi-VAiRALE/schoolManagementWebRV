@@ -8,7 +8,7 @@ import FormModal from '@/components/FormModal'
 import { Prisma ,Result, Student, Exam, Assignment} from '@prisma/client'
 import prisma from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
-import { it } from 'node:test'
+import { currentUser } from '@clerk/nextjs/server'
 
 type ResultList = {
             id:number,
@@ -87,7 +87,7 @@ async function ResultListPage({searchParams,}:{searchParams:{[key:string]:string
 
     const {page , ...queryParams} = await searchParams;
     const p = page ? parseInt(page) : 1;
-
+    const userRole = await currentUser();
     // URL Params condition
 
     const query: Prisma.ResultWhereInput = {}
@@ -110,6 +110,16 @@ async function ResultListPage({searchParams,}:{searchParams:{[key:string]:string
                 }
             }
         }
+    }
+
+    switch (userRole?.publicMetadata.role) {
+        case 'admin':
+            break;
+        case 'student':
+            query.studentId = 'student2';
+            break;
+        default:
+            break;
     }
 
     const [dataRes,count] = await prisma.$transaction([

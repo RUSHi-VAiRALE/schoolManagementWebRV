@@ -101,9 +101,9 @@ async function AssignmentListPage({searchParams,}:{searchParams:{[key:string]:st
             break;
         case "student":
             query.lesson.class = {
-                student:{
+                students:{
                     some:{
-                        id : 'student3'
+                        id : 'student2'
                     }
                 }
             };
@@ -113,7 +113,7 @@ async function AssignmentListPage({searchParams,}:{searchParams:{[key:string]:st
             break
         case "parent":
             query.lesson.class = {
-                student:{
+                students:{
                     some:{
                         parentId : 'parentId1'
                     }

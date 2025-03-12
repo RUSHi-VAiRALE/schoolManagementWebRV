@@ -9,7 +9,7 @@ import FormModal from '@/components/FormModal'
 import prisma from '@/lib/prisma'
 import { Announcement, Class, Prisma } from '@prisma/client'
 import { ITEM_PER_PAGE } from '@/lib/settings'
-
+import { currentUser } from '@clerk/nextjs/server'
 type AnnouncementsList = Announcement & {class:Class}
 
 const columns = [
@@ -58,11 +58,11 @@ async function AnnouncementListPage({searchParams,}:{searchParams:{[key:string]:
 
     const {page , ...queryParams} = await searchParams;
     const p = page ? parseInt(page) : 1;
-
+    const userRole = await currentUser();
     // URL Params condition
 
     const query: Prisma.AnnouncementWhereInput = {}
-
+    query.class = {}
     if(queryParams){
         for(const [key,value] of Object.entries(queryParams)){
             if(value !== undefined){
@@ -76,7 +76,21 @@ async function AnnouncementListPage({searchParams,}:{searchParams:{[key:string]:
             }
         }
     }
-
+    
+    switch (userRole?.publicMetadata.role) {
+        case 'admin':
+            break;
+        case 'student':
+            query.class = {
+                students:{
+                    some:{
+                        id: 'student2'
+                    }
+                }
+            }
+        default:
+            break;
+    }
     const [data,count] = await prisma.$transaction([
         prisma.announcement.findMany(
         {

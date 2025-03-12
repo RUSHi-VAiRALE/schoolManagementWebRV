@@ -8,6 +8,7 @@ import { role, examsData } from '@/lib/data'
 import FormModal from '@/components/FormModal'
 import {Prisma, Exam, Subject, Class, Teacher, Lesson } from '@prisma/client'
 import { ITEM_PER_PAGE } from '@/lib/settings'
+import { currentUser } from '@clerk/nextjs/server'
 
 type ExamList = Exam & {lesson:{subject:Subject, class:Class, teacher:Teacher}}
 
@@ -63,10 +64,11 @@ async function ExamListPage({searchParams,}:{searchParams:{[key:string]:string |
 
     const {page , ...queryParams} = await searchParams;
     const p = page ? parseInt(page) : 1;
-
+    const userRole = await currentUser();
     // URL Params condition
 
     const query: Prisma.ExamWhereInput = {}
+    query.lesson = {}
 
     if(queryParams){
         for(const [key,value] of Object.entries(queryParams)){
@@ -93,6 +95,21 @@ async function ExamListPage({searchParams,}:{searchParams:{[key:string]:string |
                 }
             }
         }
+    }
+
+    switch (userRole?.publicMetadata.role) {
+        case "admin":
+            break;
+        case 'student':
+            query.lesson.class = {
+                students: {
+                    some: {
+                        id: 'student2'
+                    }
+                }
+            };
+        default:
+            break;
     }
 
     const [data,count] = await prisma.$transaction([

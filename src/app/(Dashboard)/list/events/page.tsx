@@ -9,6 +9,7 @@ import FormModal from '@/components/FormModal'
 import { Class, Event ,Prisma} from '@prisma/client'
 import prisma from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
+import { currentUser } from '@clerk/nextjs/server'
 
 type EventList = Event & {class:Class}
 
@@ -80,10 +81,12 @@ async function EventListPage({searchParams,}:{searchParams:{[key:string]:string 
 
     const {page , ...queryParams} = await searchParams;
     const p = page ? parseInt(page) : 1;
+    const userRole = await currentUser();
 
     // URL Params condition
 
     const query: Prisma.EventWhereInput = {}
+    query.class = {}
 
     if(queryParams){
         for(const [key,value] of Object.entries(queryParams)){
@@ -97,6 +100,21 @@ async function EventListPage({searchParams,}:{searchParams:{[key:string]:string 
                 }
             }
         }
+    }
+
+    switch (userRole?.publicMetadata.role) {
+        case 'admin':
+            break;
+        case 'student':
+            query.class = {
+                students:{
+                    some:{
+                        id:'student2'
+                    }
+                }
+            }
+        default:
+            break;
     }
 
     const [data,count] = await prisma.$transaction([
