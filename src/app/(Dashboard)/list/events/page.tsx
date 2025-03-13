@@ -113,6 +113,14 @@ async function EventListPage({searchParams,}:{searchParams:{[key:string]:string 
                     }
                 }
             }
+        case 'parent':
+            query.class ={
+                students:{
+                    some :{
+                        parentId:'parentId1'
+                    }
+                }
+            }
         default:
             break;
     }

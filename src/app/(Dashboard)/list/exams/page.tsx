@@ -108,6 +108,17 @@ async function ExamListPage({searchParams,}:{searchParams:{[key:string]:string |
                     }
                 }
             };
+        case 'teacher':
+            query.lesson.teacherId = 'teacher5';
+            break;
+        case 'parent':
+            query.lesson.class={
+                students:{
+                    some:{
+                        parentId : 'parentId2'
+                    }
+                }
+            }
         default:
             break;
     }

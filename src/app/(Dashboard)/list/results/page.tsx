@@ -118,6 +118,16 @@ async function ResultListPage({searchParams,}:{searchParams:{[key:string]:string
         case 'student':
             query.studentId = 'student2';
             break;
+        case 'parent':
+            query.student = {
+                parentId : 'parentId2'
+            }
+            break;
+        case 'teacher':
+            query.OR = [
+                {exam:{lesson:{teacherId:'teacherId2'}}}, 
+                {assignment:{lesson:{teacherId:'teacher3'}}}
+            ]
         default:
             break;
     }
