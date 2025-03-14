@@ -3,33 +3,40 @@
 import Image from 'next/image';
 import React from 'react'
 import { RadialBarChart, RadialBar, Legend, ResponsiveContainer } from 'recharts';
+import { fetchCount } from '@/app/serverActions/fetchCount';
+import { useEffect , useState} from 'react';
+import { Girassol } from 'next/font/google';
 
-const data = [
+
+function CountChart() {
+  const [dataTmp, setDataTmp] = useState<{girls:number ; boys:number}>({
+    girls : 0,
+    boys : 0
+  })
+  useEffect(() => {
+    const updateCount = async () => {
+      const data = await fetchCount();
+      setDataTmp(data);
+    }
+    updateCount();
+  },[])
+  const data = [
   {
     name: 'Total',
-    count: 106,
+    count: dataTmp.boys+dataTmp.girls,
     fill: 'white',
   },
   {
     name: 'Girls',
-    count: 50,
+    count: dataTmp.girls,
     fill: '#FAE27C',
   },
   {
     name: 'Boys',
-    count: 53,
+    count: dataTmp.boys,
     fill: '#C3EBFA',
   },
 ];
-
-// const style = {
-//   top: '50%',
-//   right: 0,
-//   transform: 'translate(0, -50%)',
-//   lineHeight: '24px',
-// };
-
-function CountChart() {
   return (
     <div className='bg-white rounded-xl w-full h-full p-4'>
         {/*section 1 Title*/}
@@ -53,13 +60,13 @@ function CountChart() {
         <div className='flex gap-16 justify-center'>
             <div className='flex flex-col gap-1'>
                 <div className='w-5 h-5 bg-custColor rounded-full'></div>
-                <h1 className='font-bold'>1,234</h1>
-                <h2 className='text-xs text-gray-300'>Boys (55%)</h2>
+                <h1 className='font-bold'>{dataTmp.boys}</h1>
+                <h2 className='text-xs text-gray-300'>Boys ({(dataTmp.boys!==0)?Math.round((dataTmp.boys/(dataTmp.boys+dataTmp.girls)) * 100):0}%)</h2>
             </div>
             <div className='flex flex-col gap-1'>
                 <div className='w-5 h-5 bg-custYellow rounded-full'></div>
-                <h1 className='font-bold'>1,234</h1>
-                <h2 className='text-xs text-gray-300'>Girls (55%)</h2>
+                <h1 className='font-bold'>{dataTmp.girls}</h1>
+                <h2 className='text-xs text-gray-300'>Girls ({(dataTmp.girls!==0)?Math.round((dataTmp.girls/(dataTmp.boys+dataTmp.girls)) * 100):0}%)</h2>
             </div>
         </div>
     </div>
