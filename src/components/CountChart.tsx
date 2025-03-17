@@ -5,7 +5,7 @@ import React from 'react'
 import { RadialBarChart, RadialBar, Legend, ResponsiveContainer } from 'recharts';
 import { fetchCount } from '@/app/serverActions/fetchCount';
 import { useEffect , useState} from 'react';
-import { Girassol } from 'next/font/google';
+import { useRouter } from 'next/router';
 
 
 function CountChart() {

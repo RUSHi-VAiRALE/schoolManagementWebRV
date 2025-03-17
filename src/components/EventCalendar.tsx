@@ -1,9 +1,12 @@
 'use client'
 
 import Image from 'next/image';
-import React,{useState} from 'react'
-import Calendar from 'react-calendar';
+import React,{useEffect, useState} from 'react'
+import { Calendar } from './ui/calendar';
+import { useRouter } from 'next/navigation';
 import 'react-calendar/dist/Calendar.css';
+import { fetchEvents } from '@/app/serverActions/fetchCount';
+
 
 const events = [
   {
@@ -31,10 +34,60 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 function EventCalendar() {
-    const [value, onChange] = useState<Value>(new Date());
+    const [date, setDate] = React.useState<Date | undefined>(new Date())
+    
+
+    const handleDateSelect = async (newDate: Date | undefined) => {
+      setDate(newDate);
+      
+      if (newDate) {
+        try {
+          // Format the date as YYYY-MM-DD
+          const formattedDate = newDate.toISOString().split('T')[0];
+          console.log("Fetching events for:", formattedDate);
+          
+          // Fetch events for the selected date
+          const fetchedEvents = await fetchEvents(formattedDate);
+          
+          // Update events state if data is returned
+          if (fetchedEvents && Array.isArray(fetchedEvents)) {
+            //setEvents(fetchedEvents);
+            console.log("Updated events:", fetchedEvents);
+          }
+        } catch (error) {
+          console.error("Error fetching events:", error);
+        }
+      }
+    };
+    
+    // Fetch events for the initial date on component mount
+    useEffect(() => {
+      const fetchInitialEvents = async () => {
+        if (date) {
+          const formattedDate = date.toISOString().split('T')[0];
+          try {
+            const initialEvents = await fetchEvents(formattedDate);
+            if (initialEvents && Array.isArray(initialEvents)) {
+              //setEvents(initialEvents);
+              console.log("Initial events:", initialEvents);
+            }
+          } catch (error) {
+            console.error("Error fetching initial events:", error);
+          }
+        }
+      };
+      
+      fetchInitialEvents();
+    }, []);
+   
   return (
     <div className='bg-white p-4 rounded-lg'>
-        <Calendar onChange={onChange} value={value} />
+        <Calendar
+      mode="single"
+      selected={date}
+      onSelect={handleDateSelect}
+      className="rounded-md border shadow w-full"
+    />
         <div className='flex items-center justify-between'>
             <h1 className='text-xl font-semibold my-4'>Events</h1>
             <Image src="/moreDark.png" alt='moreDark' width={20} height={20}/>
